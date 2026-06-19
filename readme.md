@@ -7,7 +7,7 @@
      <br>для записи последовательностей экранных состояний (стейтов)<br>
      и захвата кастомных курсора мыши<br>
     <strong> </strong> <br>
-    <strong>Скачать:</strong> <a href=" ">exe</a> или если нужна сборка:<br>
+    <strong>Скачать:</strong> <a href="https://github.com/AleksandrovskyV/mouse_states_recorder/releases/download/v1/mouse_states.exe">exe</a> или если нужна сборка:<br>
   </p>
 </div>
 <br>
