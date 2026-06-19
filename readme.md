@@ -1,4 +1,4 @@
-# Mouse App States Recorder
+# Mouse States Recorder
 <br>
 <div style="overflow: hidden; margin-bottom: 12px;">
   <img src="./assets/mouse_state_recorder_icon.png" width="84" align="left" style="margin-right: 24px; margin-top: -2px;">
