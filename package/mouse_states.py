@@ -254,14 +254,7 @@ class FileItemWidget(QWidget):
         )
         self.label_name.setText(elided_text)
 
-        
-"""
-def leaveEvent(self, event):
 
-    self.current_mouse_pos = None
-    self.update()
-    super().leaveEvent(event)
-"""
 
 class CaptureAreaWidget(QWidget):
     def __init__(self, parent=None):
@@ -360,15 +353,6 @@ class CaptureAreaWidget(QWidget):
             y = (win_h - new_h) // 2
             painter.drawPixmap(x, y, new_w, new_h, pixmap)
 
-        # 2. РИСУЕМ КУРСОР
-        """
-        if self.cursor_pixmap and self.current_mouse_pos:
-            cx = self.current_mouse_pos.x()
-            cy = self.current_mouse_pos.y()
-            painter.drawPixmap(cx, cy, self.cursor_pixmap)
-
-"""
-
 
 class RecorderApp(QMainWindow):
     def __init__(self):
@@ -390,11 +374,9 @@ class RecorderApp(QMainWindow):
         self.q_param = 6
         self.user_hex_color = "green"
 
-        # Таймер записи (Захват результирующего MP4)
         self.timer_record = QTimer()
         self.timer_record.timeout.connect(self.capture_frame)
         
-        # Таймер плеера (Обновление кадров видеофайлов на экране)
         self.timer_video = QTimer()
         self.timer_video.timeout.connect(self.play_video_step)
         
@@ -404,8 +386,8 @@ class RecorderApp(QMainWindow):
         # Переменные видеоплеера
         self.cap = None  # Объект cv2.VideoCapture
         self.video_fps = 30
-        self.video_playing = False  # Флаг: играет ли видео прямо сейчас
-        self.is_first_rec_click = True  # Флаг первого клика после нажатия REC
+        self.video_playing = False
+        self.is_first_rec_click = True
         self.frame_jitter = False
         
         self.mouse_only_buffer = None 
@@ -416,7 +398,6 @@ class RecorderApp(QMainWindow):
         self.init_ui()
         
 
-
         if not self.app_cursor_pixmap.isNull():
             self.app_cursor = QCursor(self.app_cursor_pixmap, 0, 0)
             self.setCursor(self.app_cursor)
@@ -424,12 +405,12 @@ class RecorderApp(QMainWindow):
             self.capture_area.set_custom_cursor(None) 
             self.capture_area.setCursor(self.app_cursor)
 
+
     def img_to_byde(self):
         import base64
         with open("./assets/arrow.png", "rb") as image_file:
             base64_string = base64.b64encode(image_file.read()).decode('utf-8')
             print(base64_string) 
-
 
 
     def init_ui(self):
@@ -604,22 +585,23 @@ class RecorderApp(QMainWindow):
 
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
-        self.h_spacer = QWidget()
-        self.h_spacer.setFixedHeight(10)
 
 
         # SETTING COMBINE
         setting_layout.addWidget(self.setting_label)
-        setting_layout.addWidget(self.h_spacer)
+        setting_layout.addSpacing(10)
         
         setting_layout.addWidget(self.area_size)
         setting_layout.addWidget(size_inputs_widget)
 
+        setting_layout.addSpacing(8)
+
         setting_layout.addWidget(self.base_param_label)
         setting_layout.addWidget(mouse_grab_w)
 
-        setting_layout.addWidget(self.quality_label)
-        setting_layout.addWidget(codec_w)
+        #setting_layout.addWidget(self.quality_label)
+        #setting_layout.addWidget(codec_w)
+        setting_layout.addSpacing(8)
 
         setting_layout.addWidget(self.state_label)
         setting_layout.addWidget(scroll)
