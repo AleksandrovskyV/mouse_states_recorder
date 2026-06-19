@@ -5,7 +5,7 @@
   <p style="margin: 0 0 -2px 0;">
      Приложение на <strong>PySide6</strong>  
      <br>для записи последовательностей экранных состояний (стейтов)<br>
-     и захвата кастомных курсора мыши<br>
+     и захвата кастомных курсоров мыши<br>
     <strong> </strong> <br>
     <strong>Скачать:</strong> <a href="https://github.com/AleksandrovskyV/mouse_states_recorder/releases/download/v1/mouse_states.exe">exe</a> или если нужна сборка:<br>
   </p>
