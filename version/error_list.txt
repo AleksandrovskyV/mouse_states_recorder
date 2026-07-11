@@ -1,8 +1,8 @@
 After Effects Jittering
 mouse_alpha_from_release_py.mov
 - 2014 (PC05) - work
--
--
+- 2018 (PC05) - не открывает mov вовсе
+- 2020 (PC05) - not work
 
 ///// .py
 
