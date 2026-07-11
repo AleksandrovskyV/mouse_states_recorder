@@ -36,7 +36,7 @@ for dll_path, target_dir in needed_dlls:
     binaries.append((src, target_dir))
 
 a = Analysis(
-    ['mouse_states.py'],  # путь к твоему скрипту
+    ['mouse_states_release.py'],  # путь к твоему скрипту
     pathex=[project_dir],
     binaries=binaries,
     datas=asset_files + data_files,
