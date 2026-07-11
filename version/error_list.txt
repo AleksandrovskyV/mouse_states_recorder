@@ -1,0 +1,18 @@
+nocv
+
+Traceback (most recent call last):
+  File "Q:\GIT\mouse_states_recorder\version\mouse_states_nocv.py", line 1150, in capture_frame
+    self.video_writer.append_data(frame)
+  File "C:\Users\PC05\AppData\Local\Programs\Python\Python310\lib\site-packages\imageio\core\format.py", line 589, in append_data
+    return self._append_data(im, total_meta)
+  File "C:\Users\PC05\AppData\Local\Programs\Python\Python310\lib\site-packages\imageio\plugins\ffmpeg.py", line 606, in _append_data
+    self._write_gen.send(im)
+StopIteration
+Traceback (most recent call last):
+  File "Q:\GIT\mouse_states_recorder\version\mouse_states_nocv.py", line 1150, in capture_frame
+    self.video_writer.append_data(frame)
+  File "C:\Users\PC05\AppData\Local\Programs\Python\Python310\lib\site-packages\imageio\core\format.py", line 589, in append_data
+    return self._append_data(im, total_meta)
+  File "C:\Users\PC05\AppData\Local\Programs\Python\Python310\lib\site-packages\imageio\plugins\ffmpeg.py", line 606, in _append_data
+    self._write_gen.send(im)
+StopIteration
