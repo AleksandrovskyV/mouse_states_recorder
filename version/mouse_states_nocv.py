@@ -1,10 +1,9 @@
-# cv + imageo version
+# no cv version
 
 import sys, os
 
 import numpy as np
 import imageio
-import cv2
 
 import tempfile, shutil
 
@@ -256,7 +255,14 @@ class FileItemWidget(QWidget):
         )
         self.label_name.setText(elided_text)
 
+        
+"""
+def leaveEvent(self, event):
 
+    self.current_mouse_pos = None
+    self.update()
+    super().leaveEvent(event)
+"""
 
 class CaptureAreaWidget(QWidget):
     def __init__(self, parent=None):
@@ -355,13 +361,22 @@ class CaptureAreaWidget(QWidget):
             y = (win_h - new_h) // 2
             painter.drawPixmap(x, y, new_w, new_h, pixmap)
 
+        # 2. РИСУЕМ КУРСОР
+        """
+        if self.cursor_pixmap and self.current_mouse_pos:
+            cx = self.current_mouse_pos.x()
+            cy = self.current_mouse_pos.y()
+            painter.drawPixmap(cx, cy, self.cursor_pixmap)
+
+"""
+
 
 class RecorderApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
         
-        self.setWindowTitle("Mouse App States Recorder")
+        self.setWindowTitle("Mouse App States Recorder / NoCV")
         self.resize(1050, 660) 
 
         # Курсор
@@ -376,9 +391,11 @@ class RecorderApp(QMainWindow):
         self.q_param = 6
         self.user_hex_color = "green"
 
+        # Таймер записи (Захват результирующего MP4)
         self.timer_record = QTimer()
         self.timer_record.timeout.connect(self.capture_frame)
         
+        # Таймер плеера (Обновление кадров видеофайлов на экране)
         self.timer_video = QTimer()
         self.timer_video.timeout.connect(self.play_video_step)
         
@@ -386,10 +403,13 @@ class RecorderApp(QMainWindow):
         self.video_writer = None
 
         # Переменные видеоплеера
-        self.cap = None  # Объект cv2.VideoCapture
+        self.cap = None  # Сюда будет сохраняться объект imageio.get_reader
+        self.current_video_frame_idx = 0  # Текущий индекс кадра
+        self.total_video_frames = 0       # Общее количество кадров в видео
+
         self.video_fps = 30
-        self.video_playing = False
-        self.is_first_rec_click = True
+        self.video_playing = False  # Флаг: играет ли видео прямо сейчас
+        self.is_first_rec_click = True  # Флаг первого клика после нажатия REC
         self.frame_jitter = False
         
         self.mouse_only_buffer = None 
@@ -400,6 +420,7 @@ class RecorderApp(QMainWindow):
         self.init_ui()
         
 
+
         if not self.app_cursor_pixmap.isNull():
             self.app_cursor = QCursor(self.app_cursor_pixmap, 0, 0)
             self.setCursor(self.app_cursor)
@@ -407,12 +428,12 @@ class RecorderApp(QMainWindow):
             self.capture_area.set_custom_cursor(None) 
             self.capture_area.setCursor(self.app_cursor)
 
-
     def img_to_byde(self):
         import base64
         with open("./assets/arrow.png", "rb") as image_file:
             base64_string = base64.b64encode(image_file.read()).decode('utf-8')
             print(base64_string) 
+
 
 
     def init_ui(self):
@@ -587,23 +608,22 @@ class RecorderApp(QMainWindow):
 
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
+        self.h_spacer = QWidget()
+        self.h_spacer.setFixedHeight(10)
 
 
         # SETTING COMBINE
         setting_layout.addWidget(self.setting_label)
-        setting_layout.addSpacing(10)
+        setting_layout.addWidget(self.h_spacer)
         
         setting_layout.addWidget(self.area_size)
         setting_layout.addWidget(size_inputs_widget)
 
-        setting_layout.addSpacing(8)
-
         setting_layout.addWidget(self.base_param_label)
         setting_layout.addWidget(mouse_grab_w)
 
-        #setting_layout.addWidget(self.quality_label)
-        #setting_layout.addWidget(codec_w)
-        setting_layout.addSpacing(8)
+        setting_layout.addWidget(self.quality_label)
+        setting_layout.addWidget(codec_w)
 
         setting_layout.addWidget(self.state_label)
         setting_layout.addWidget(scroll)
@@ -891,8 +911,8 @@ class RecorderApp(QMainWindow):
 
 
     def load_media(self, file_path, play_immediately=True):
-        """Загрузка медиафайла. Определяет видео/картинку."""
-        self.close_video()  # Закрываем предыдущее видео, если оно было
+        """Загрузка медиафайла. Определяет видео/картинку через imageio."""
+        self.close_video()  # Закрываем предыдущее видео
         
         if not file_path:
             return
@@ -904,13 +924,22 @@ class RecorderApp(QMainWindow):
             self.status_label.setText(f"preview {'video' if is_video else 'image'}")
 
         if is_video:
-            self.cap = cv2.VideoCapture(file_path)
-            if self.cap.isOpened():
-                # Получаем родной FPS видеофайла
-                fps = self.cap.get(cv2.CAP_PROP_FPS)
+            # Используем imageio.get_reader вместо cv2.VideoCapture
+            # Режим 'I' означает покадровое чтение изображений/видео (Image/Video)
+            self.cap = imageio.get_reader(file_path, 'ffmpeg')
+            
+            if self.cap is not None:
+                # Получаем родной FPS видеофайла из его метаданных
+                meta = self.cap.get_meta_data()
+                fps = meta.get('fps', 30)
                 self.video_fps = int(fps) if fps > 0 else 30
                 
-                # Читаем самый первый кадр, чтобы показать превью
+                # В imageio мы вручную управляем индексом кадра
+                self.current_video_frame_idx = 0
+                # Получаем общее количество кадров
+                self.total_video_frames = self.cap.count_frames()
+                
+                # Читаем первый кадр для превью
                 self.show_next_video_frame()
                 
                 if play_immediately:
@@ -920,34 +949,37 @@ class RecorderApp(QMainWindow):
                     self.video_playing = False
                     self.timer_video.stop()
         else:
-            # Статичное изображение
             self.video_playing = False
             self.timer_video.stop()
             self.capture_area.set_image(file_path)
 
 
-    def show_next_video_frame(self):
-        """Читает один кадр из cv2 и отправляет его в область захвата."""
-        if not self.cap or not self.cap.isOpened():
-            return
 
-        ret, frame = self.cap.read()
-        
-        if not ret:
+    def show_next_video_frame(self):
+        """Читает один кадр из imageio и отправляет его в область захвата."""
+        if not self.cap or self.current_video_frame_idx >= self.total_video_frames:
+            # Если кадры закончились
             self.video_playing = False
             self.timer_video.stop()
             if not self.is_recording:
                 self.status_label.setText("preview video (ended)")
             return
 
-        if ret:
-            # Конвертируем BGR (OpenCV) -> RGB -> QPixmap
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # Читаем кадр напрямую в формате RGB
+        frame = self.cap.get_data(self.current_video_frame_idx)
+        
+        if frame is not None:
             h, w, ch = frame.shape
             bytes_per_line = ch * w
+            
+            # Конвертируем массив NumPy сразу в QImage (переворот цвета BGR->RGB больше НЕ НУЖЕН)
             q_img = QImage(frame.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
             pixmap = QPixmap.fromImage(q_img)
             self.capture_area.set_video_frame(pixmap)
+            
+            # Сдвигаем индекс на следующий кадр
+            self.current_video_frame_idx += 1
+
 
     def play_video_step(self):
         """Срабатывает по таймеру видеоплеера."""
@@ -955,12 +987,14 @@ class RecorderApp(QMainWindow):
             self.show_next_video_frame()
 
     def close_video(self):
-        """Освобождение ресурсов видеоплеера."""
+        """Освобождение ресурсов видеоплеера imageio."""
         self.timer_video.stop()
         if self.cap:
-            self.cap.release()
+            self.cap.close() # Изменили release() на close()
             self.cap = None
         self.video_playing = False
+        self.current_video_frame_idx = 0
+        self.total_video_frames = 0
 
 
     # RECORDING
