@@ -1,4 +1,6 @@
-nocv
+///// .py
+
+nocv version
 
 Traceback (most recent call last):
   File "Q:\GIT\mouse_states_recorder\version\mouse_states_nocv.py", line 1150, in capture_frame
@@ -16,3 +18,21 @@ Traceback (most recent call last):
   File "C:\Users\PC05\AppData\Local\Programs\Python\Python310\lib\site-packages\imageio\plugins\ffmpeg.py", line 606, in _append_data
     self._write_gen.send(im)
 StopIteration
+
+
+core version 
+- не пишет .mov с пиксель хинтом под ае
+
+///// .exe
+
+На второй системе могли не запускать exe 
+- ошибка распаковки ffmpeg (скорее всего из-за нехватки места на локальном диске)
+
+На второй система version/dist/mouse_states_prebuild.exe (более старая версия с quality)
+- не пишет .mov с пиксель хинтом под ае
+
+На второй система version/dist/mouse_states_relase.exe (версия с вырезанным quality)
+- не пишет .mov с пиксель хинтом под ае
+
+
+
