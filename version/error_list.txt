@@ -1,3 +1,9 @@
+After Effects Jittering
+mouse_alpha_from_release_py.mov
+- 2014 (PC05) - work
+-
+-
+
 ///// .py
 
 nocv version
