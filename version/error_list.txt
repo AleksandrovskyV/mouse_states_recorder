@@ -1,6 +1,10 @@
 ///// .py
 
 nocv version
+- может не писать файл вовсе (alpha)
+
+
+Возможно из-за недостатка места на диске:
 
 Traceback (most recent call last):
   File "Q:\GIT\mouse_states_recorder\version\mouse_states_nocv.py", line 1150, in capture_frame
