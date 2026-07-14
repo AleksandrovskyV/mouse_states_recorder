@@ -18,7 +18,7 @@ pip install PySide6 numpy imageio[ffmpeg] opencv-python
 
 ```
 
-./package/package.bat
+./version/mouse_state_release_pack.bat
 
 
 * есть версия без opencv 
